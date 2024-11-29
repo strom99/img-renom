@@ -19,6 +19,12 @@ export default function App() {
 
   return (
     <>
+    <div className='form-subida'>
+      <form action="post">
+        <label htmlFor={'imagen'}>Subir Imagenes</label>
+        <input name='imagen' id='imagen' type="file" accept="image/png, image/jpeg" />
+      </form>
+    </div>
       <div className='boxImg'>
         <ImgView/>
       </div>
