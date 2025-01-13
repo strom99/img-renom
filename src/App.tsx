@@ -3,20 +3,20 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css';
 import PropTypes from 'prop-types'; 
-import rata from './assets/rata.jpg'
+import rata from './assets/rata.jpg';
+
+interface ImgViewProps {
+  onImageClick: (selectedImage: HTMLImageElement) => void; // Función que se ejecuta al hacer clic en una imagen
+}
 
 
-function ImgView({data}){
+const ImgView: React.FC<ImgViewProps> = ({ data, onImageClick,select }) => {
+
   if (!data) return null; // Retorna nada si no hay data
-
-  function click(e: React.MouseEvent<HTMLImageElement, MouseEvent>){
-    console.log(e.target)
-  }
-
 
   return (
     <div className='img'>
-      <img onClick={click} src={URL.createObjectURL(data)} alt={data.name} />
+      <img onClick={select} src={URL.createObjectURL(data)} alt={data.name} />
       <span>{data.name}</span>
     </div>
   )
@@ -31,6 +31,7 @@ ImgView.prototype = {
 export default function App() {
   const [error, setError] = useState('');
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [renam, setRenam] = useState<HTMLImageElement[]>([]);
 
   const handleFileChange = (e:any) => {
     const files = e.target.files; // Obtenemos el primer archivo
@@ -57,6 +58,12 @@ export default function App() {
 
   };
 
+  function onClicked(image:HTMLImageElement){
+    console.log("hello")
+  }
+
+
+
   return (
     <>
     <div className='form-subida'>
@@ -69,7 +76,7 @@ export default function App() {
       <div className='boxImg'>
       {selectedImages.length > 0 ? (
           selectedImages.map((image, index) => (
-            <ImgView key={index} data={image} />
+            <ImgView key={index} data={image} select={()=>onClicked(image)} />
           ))
         ) : (
           <p>No hay imágenes seleccionadas.</p>

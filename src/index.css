@@ -4,6 +4,7 @@
 }
 
 .boxImg img{
+  box-sizing: border-box;
   height: 300px;
   width: 200px;
   object-fit: cover;
