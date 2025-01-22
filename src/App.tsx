@@ -6,16 +6,17 @@ import PropTypes from 'prop-types';
 import rata from './assets/rata.jpg';
 
 interface ImgViewProps {
-  onImageClick: (selectedImage: HTMLImageElement) => void; // Función que se ejecuta al hacer clic en una imagen
+  data: any,
+  select: any,
 }
 
 
-const ImgView: React.FC<ImgViewProps> = ({ data, onImageClick,select }) => {
+const ImgView: React.FC<ImgViewProps> = ({ data, select }) => {
 
   if (!data) return null; // Retorna nada si no hay data
 
   return (
-    <div className='img'>
+    <div  className='img'>
       <img onClick={select} src={URL.createObjectURL(data)} alt={data.name} />
       <span>{data.name}</span>
     </div>
@@ -30,8 +31,8 @@ ImgView.prototype = {
 
 export default function App() {
   const [error, setError] = useState('');
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
-  const [renam, setRenam] = useState<HTMLImageElement[]>([]);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [renam, setRenam] = useState([]);
 
   const handleFileChange = (e:any) => {
     const files = e.target.files; // Obtenemos el primer archivo
@@ -58,7 +59,7 @@ export default function App() {
 
   };
 
-  function onClicked(image:HTMLImageElement){
+  function onClicked(image:File){
     console.log("hello")
   }
 
