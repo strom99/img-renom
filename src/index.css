@@ -7,13 +7,14 @@
   box-sizing: border-box;
   height: 300px;
   width: 200px;
+  margin: auto;
   object-fit: cover;
-  cursor: pointer;
   border-radius: 30px;
 }
 
 
-.boxImg img:hover{
+.boxImg .img:hover{
+  cursor: pointer;
   transition: .3s;
   filter: drop-shadow(0px 2px 6px black)
 }
