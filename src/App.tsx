@@ -7,21 +7,21 @@ import rata from './assets/rata.jpg';
 
 interface ImgViewProps {
   data: any,
-  select: any
+  isSelected: boolean
+  toggleSelect: () => void;
 }
 
 
-const ImgView: React.FC<ImgViewProps> = ({ data, select}) => {
-  const [blue,setBlue] = useState(false);
+const ImgView: React.FC<ImgViewProps> = ({ data, toggleSelect,isSelected}) => {
+
   if (!data) return null; // Retorna nada si no hay data
   const dynamicStyle = {
-    filter: blue ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
+    filter: isSelected ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
   };
-  console.log(blue)
 
   return (
     <div style={dynamicStyle} className='img'>
-      <img onClick={(e) =>{select(),setBlue(!blue)}} src={URL.createObjectURL(data)} alt={data.name} />
+      <img onClick={toggleSelect} src={URL.createObjectURL(data)} alt={data.name} />
       <span>{data.name}</span>
     </div>
   )
@@ -40,6 +40,10 @@ export default function App() {
   const [validImages, setValidImages] = useState<File[]>([]);
 
 
+  const toggleSelection = (img: File) => {
+    console.log(img)
+
+  };
 
   const handleFileChange = (e:any) => {
     const files = e.target.files; // Obtenemos el primer archivo
@@ -61,14 +65,15 @@ export default function App() {
       setError('');
     }
 
+    console.log('new'+ valid)
     setValidImages(valid);
 
   };
 
-  function onClicked(image:File){
-    renam.push(image);
-    console.log('renam'+ renam)
+  function verify(image:File){
 
+    setSelectedImages([...selectedImages,image])
+    return true;
   }
 
 
@@ -85,7 +90,7 @@ export default function App() {
       <div className='boxImg'>
       {validImages.length > 0 ? (
           validImages.map((image, index) => (
-            <ImgView key={index} data={image} select={()=>onClicked(image)}/>
+            <ImgView key={index} data={image} isSelected={verify(image)} toggleSelect={() => toggleSelection(image)}/>
           ))
         ) : (
           <p>No hay imágenes seleccionadas.</p>
