@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css';
 import PropTypes from 'prop-types'; 
 import rata from './assets/rata.jpg';
@@ -19,6 +17,8 @@ const ImgView: React.FC<ImgViewProps> = ({ data, toggleSelect,isSelected}) => {
     filter: isSelected ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
   };
 
+  console.log('hijo');
+
   return (
     <div style={dynamicStyle} className='img'>
       <img onClick={toggleSelect} src={URL.createObjectURL(data)} alt={data.name} />
@@ -32,30 +32,38 @@ const ImgView: React.FC<ImgViewProps> = ({ data, toggleSelect,isSelected}) => {
 //   data: PropTypes.string, // Esperamos que `data` sea una cadena (URL de la imagen)
 // };
 
+type ImageData = {
+  file: File;
+  status: boolean;
+};
+
 
 export default function App() {
   const [error, setError] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const renam:any = [];
-  const [validImages, setValidImages] = useState<File[]>([]);
+  const [validImages,setValidImages] = useState<ImageData[]>([]);
 
 
-  const toggleSelection = (img: File) => {
-    console.log(img)
+  const toggleSelection = (img: ImageData) => {
+    renam.push(img);
 
+    console.log(renam)
+    return !img.status;
   };
 
   const handleFileChange = (e:any) => {
     const files = e.target.files; // Obtenemos el primer archivo
     const invalidImages = [];
-    const valid = [];
+    const validImages: ImageData[] = [];
+
 
     // Iteramos por cada archivo para validarlo
     for (let file of files) {
       if (file.type === 'image/png' || file.type === 'image/jpeg') {
-        valid.push(file);
+        validImages.push({file: file,status: false});
       } else {
-        invalidImages.push(file.name);
+        invalidImages.push(file);
       }
     }
 
@@ -65,15 +73,17 @@ export default function App() {
       setError('');
     }
 
-    console.log('new'+ valid)
-    setValidImages(valid);
+    setValidImages((prev) => [...prev, ...validImages]);
 
+    console.log(validImages)
   };
 
-  function verify(image:File){
-
-    setSelectedImages([...selectedImages,image])
-    return true;
+  function verify(image: ImageData){
+// arregalr esto
+console.log(image)
+console.log('primera vuelta en 0')
+    //setSe2lectedImages([...selectedImages,image])
+    return image.status;
   }
 
 
@@ -89,8 +99,8 @@ export default function App() {
     </div>
       <div className='boxImg'>
       {validImages.length > 0 ? (
-          validImages.map((image, index) => (
-            <ImgView key={index} data={image} isSelected={verify(image)} toggleSelect={() => toggleSelection(image)}/>
+          validImages.map((image,index) => (
+            <ImgView key={index} data={image.file} isSelected={verify(image)} toggleSelect={() => toggleSelection(image)}/>
           ))
         ) : (
           <p>No hay imágenes seleccionadas.</p>
