@@ -4,64 +4,69 @@ import PropTypes from 'prop-types';
 import rata from './assets/rata.jpg';
 
 interface ImgViewProps {
+  state: boolean,
   data: any,
-  isSelected: boolean
   toggleSelect: () => void;
 }
 
 
-const ImgView: React.FC<ImgViewProps> = ({ data, toggleSelect,isSelected}) => {
+const ImgView: React.FC<ImgViewProps> = ({ state,data,toggleSelect}) => {
+  const [estado,setEstado] = useState(state);
 
+  console.log(data)
+  console.log(estado)
+  console.log('  ')
   if (!data) return null; // Retorna nada si no hay data
   const dynamicStyle = {
-    filter: isSelected ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
+    filter: estado ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
   };
-
-  console.log('hijo');
 
   return (
     <div style={dynamicStyle} className='img'>
-      <img onClick={toggleSelect} src={URL.createObjectURL(data)} alt={data.name} />
+      <img onClick={() => {setEstado(!estado);toggleSelect();} } src={URL.createObjectURL(data)} alt={data.name} />
       <span>{data.name}</span>
     </div>
   )
 }
 
 
-// ImgView.prototype = {
-//   data: PropTypes.string, // Esperamos que `data` sea una cadena (URL de la imagen)
-// };
-
-type ImageData = {
-  file: File;
-  status: boolean;
-};
 
 
 export default function App() {
+  const initial = false;
   const [error, setError] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const renam:any = [];
-  const [validImages,setValidImages] = useState<ImageData[]>([]);
+  const [validImages,setValidImages] = useState<File[]>([]);
 
 
-  const toggleSelection = (img: ImageData) => {
-    renam.push(img);
+  const toggleSelection = (img: File) => {
+    //cada click a la img
+    if(!renam.includes(img)){
+      renam.push(img);
+    }else{
+      const indice = renam.findIndex((item:File) => item === img)
+      renam.splice(indice,1)
+    }
 
     console.log(renam)
-    return !img.status;
+
   };
 
   const handleFileChange = (e:any) => {
+    if (!e.target.files || e.target.files.length === 0) {
+      return; // No hacer nada si no se seleccionó ningún archivo
+    }
+    console.log('proceso de selecciopn')
     const files = e.target.files; // Obtenemos el primer archivo
     const invalidImages = [];
-    const validImages: ImageData[] = [];
+    const validImages: File[] = [];
 
 
     // Iteramos por cada archivo para validarlo
     for (let file of files) {
       if (file.type === 'image/png' || file.type === 'image/jpeg') {
-        validImages.push({file: file,status: false});
+        validImages.push(file);
       } else {
         invalidImages.push(file);
       }
@@ -73,19 +78,8 @@ export default function App() {
       setError('');
     }
 
-    setValidImages((prev) => [...prev, ...validImages]);
-
-    console.log(validImages)
+    setValidImages(validImages);
   };
-
-  function verify(image: ImageData){
-// arregalr esto
-console.log(image)
-console.log('primera vuelta en 0')
-    //setSe2lectedImages([...selectedImages,image])
-    return image.status;
-  }
-
 
 
   return (
@@ -100,7 +94,7 @@ console.log('primera vuelta en 0')
       <div className='boxImg'>
       {validImages.length > 0 ? (
           validImages.map((image,index) => (
-            <ImgView key={index} data={image.file} isSelected={verify(image)} toggleSelect={() => toggleSelection(image)}/>
+            <ImgView state={initial} key={index} data={image}  toggleSelect={() => toggleSelection(image)}/>
           ))
         ) : (
           <p>No hay imágenes seleccionadas.</p>
