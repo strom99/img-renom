@@ -2,7 +2,7 @@
   font-family: "Playwrite HR Lijeva", cursive;
   font-size: 18px;
 }
-img{width: 100%;}
+img{width: 100%; height: 90%; object-fit: contain;}
 
 .boxImg .img:hover{
   cursor: pointer;

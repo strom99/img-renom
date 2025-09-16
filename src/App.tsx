@@ -1,100 +1,69 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import Formulario from './FormularioTemps';
 import './App.css';
-import PropTypes from 'prop-types'; 
 import rata from './assets/rata.jpg';
 
 interface ImgViewProps {
-  state: boolean,
   data: any,
   toggleSelect: () => void;
 }
 
 
-const ImgView: React.FC<ImgViewProps> = ({ state,data,toggleSelect}) => {
-  const [estado,setEstado] = useState(state);
+// Clicar iamgenes en tono violeta
+const ImgView: React.FC<ImgViewProps> = ({data,toggleSelect}) => {
 
-  console.log(data)
-  console.log(estado)
-  console.log('  ')
-  if (!data) return null; // Retorna nada si no hay data
+  if (!data.img) return null; // Retorna nada si no hay data
   const dynamicStyle = {
-    filter: estado ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
+    filter: data.valor ? "drop-shadow(1px 8px 26px #ff2fff)" : "",
   };
 
   return (
     <div style={dynamicStyle} className='img'>
-      <img onClick={() => {setEstado(!estado);toggleSelect();} } src={URL.createObjectURL(data)} alt={data.name} />
-      <span>{data.name}</span>
+      <img onClick={() => {toggleSelect();} } src={URL.createObjectURL(data.img)} alt={data.img} />
+      <span>{data.img.name}</span>
     </div>
   )
 }
 
 
 
-
 export default function App() {
-  const initial = false;
-  const [error, setError] = useState('');
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [valorFormulario, setValorFormulario] =useState<File[]>([]);
+  const [estado,setEstado] = useState(false);
   const renam:any = [];
-  const [validImages,setValidImages] = useState<File[]>([]);
+
+  console.log('ESTADO', estado);
 
 
-  const toggleSelection = (img: File) => {
+  const toggleSelection = (img: { img: File, valor: boolean }) => {
+    console.log("clicado" , img)
     //cada click a la img
-    if(!renam.includes(img)){
-      renam.push(img);
-    }else{
-      const indice = renam.findIndex((item:File) => item === img)
-      renam.splice(indice,1)
-    }
 
-    console.log(renam)
-
-  };
-
-  const handleFileChange = (e:any) => {
-    if (!e.target.files || e.target.files.length === 0) {
-      return; // No hacer nada si no se seleccionó ningún archivo
-    }
-    console.log('proceso de selecciopn')
-    const files = e.target.files; // Obtenemos el primer archivo
-    const invalidImages = [];
-    const validImages: File[] = [];
-
-
-    // Iteramos por cada archivo para validarlo
-    for (let file of files) {
-      if (file.type === 'image/png' || file.type === 'image/jpeg') {
-        validImages.push(file);
-      } else {
-        invalidImages.push(file);
+    valorFormulario.map((img0, valor) => {
+      console.log(img0)
+      if(img0 === img.img){
+        console.log("iguales")
       }
-    }
+    })
 
-    if (invalidImages.length > 0) {
-      setError(`Solo se permiten archivos de tipo PNG o JPEG. Archivos no válidos: ${invalidImages.join(', ')}`);
-    } else {
-      setError('');
-    }
-
-    setValidImages(validImages);
+    // if(!renam.includes(img)){
+    //   renam.push(img);
+    // }else{
+    //   const indice = renam.findIndex((item:File) => item === img)
+    //   renam.splice(indice,1)
+    // }
   };
+
 
 
   return (
     <>
-    <div className='form-subida'>
-      <form action="post">
-        <label className='view' htmlFor={'imagen'}>Subir Imagenes</label>
-        <input multiple name='imagen' id='imagen' type="file" accept="image/png, image/jpeg"  onChange={handleFileChange}  />
-      </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </div>
+      <Formulario onChange={setValorFormulario} setEstado={setEstado}/>
       <div className='boxImg'>
-      {validImages.length > 0 ? (
-          validImages.map((image,index) => (
-            <ImgView state={initial} key={index} data={image}  toggleSelect={() => toggleSelection(image)}/>
+      {valorFormulario.length > 0 ? (
+          valorFormulario.map((image,index) => (
+            <ImgView key={index} data={image}  toggleSelect={() => toggleSelection(image)}/>
           ))
         ) : (
           <p>No hay imágenes seleccionadas.</p>
