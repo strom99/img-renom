@@ -8,6 +8,12 @@ interface ImgViewProps {
   toggleSelect: () => void;
 }
 
+export type ImagenConEstado = {
+  img: File;
+  valor: boolean;
+};
+
+
 
 // Clicar iamgenes en tono violeta
 const ImgView: React.FC<ImgViewProps> = ({data,toggleSelect}) => {
@@ -28,8 +34,8 @@ const ImgView: React.FC<ImgViewProps> = ({data,toggleSelect}) => {
 
 
 export default function App() {
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [valorFormulario, setValorFormulario] =useState<File[]>([]);
+  const [selectedImages, setSelectedImages] = useState<ImagenConEstado[]>([]);
+  const [valorFormulario, setValorFormulario] =useState<ImagenConEstado[]>([]);
   const [estado,setEstado] = useState(false);
   const renam:any = [];
 
@@ -40,11 +46,23 @@ export default function App() {
     console.log("clicado" , img)
     //cada click a la img
 
-    valorFormulario.map((img0, valor) => {
+    valorFormulario.map(( img0: any, valor) => {
       console.log(img0)
-      if(img0 === img.img){
-        console.log("iguales")
+      if(selectedImages.length == 0){
+        setSelectedImages((prev) => [...prev, img])
+      }else{
+        const exists = selectedImages.some((item) => item.img === img.img);
+
+        if (exists) {
+          console.log("Ya estaba seleccionada, la quitamos");
+          setSelectedImages((prev) => prev.filter((item) => item.img !== img.img));
+        } else {
+          console.log("No estaba seleccionada, la añadimos");
+          setSelectedImages((prev) => [...prev, img]);
+        }
       }
+      
+
     })
 
     // if(!renam.includes(img)){
@@ -62,7 +80,7 @@ export default function App() {
       <Formulario onChange={setValorFormulario} setEstado={setEstado}/>
       <div className='boxImg'>
       {valorFormulario.length > 0 ? (
-          valorFormulario.map((image,index) => (
+          valorFormulario.map((image: any,index) => (
             <ImgView key={index} data={image}  toggleSelect={() => toggleSelection(image)}/>
           ))
         ) : (

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import PropTypes from 'prop-types';
+import { ImagenConEstado } from './App';
 
 type FormularioProps = {
-    onChange: (valor: File[]) => void,
+    onChange: (valor: SetStateAction<ImagenConEstado[]>) => void,
     setEstado: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -10,12 +11,6 @@ type FormularioProps = {
 
 export default function Formulario({ onChange, setEstado } : FormularioProps) {
     const [error, setError] = useState('');
-
-    // Por ejemplo, resetear estado solo cuando se monta el componente:
-    useEffect(() => {
-        setEstado(false);
-    }, []);
-
     const handleFileChange = (e: any) => {
         console.log("clicado")
         if (!e.target.files || e.target.files.length === 0) {
@@ -23,7 +18,7 @@ export default function Formulario({ onChange, setEstado } : FormularioProps) {
         }
         console.log('proceso de selecciopn')
         const files = e.target.files; // Obtenemos el primer archivo
-        const invalidImages: { img: File, valor: Boolean}[] = [];
+        const invalidImages: { img: File, valor: Boolean} = [];
         const validImages: { img: File, valor: Boolean}[] = [];
 
         // Iteramos por cada archivo para validarlo
