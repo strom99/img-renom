@@ -12,13 +12,11 @@ type FormularioProps = {
 export default function Formulario({ onChange, setEstado } : FormularioProps) {
     const [error, setError] = useState('');
     const handleFileChange = (e: any) => {
-        console.log("clicado")
         if (!e.target.files || e.target.files.length === 0) {
             return; // No hacer nada si no se seleccionó ningún archivo
         }
-        console.log('proceso de selecciopn')
         const files = e.target.files; // Obtenemos el primer archivo
-        const invalidImages: { img: File, valor: Boolean} = [];
+        const invalidImages: { img: File, valor: Boolean}[] = [];
         const validImages: { img: File, valor: Boolean}[] = [];
 
         // Iteramos por cada archivo para validarlo
@@ -35,8 +33,6 @@ export default function Formulario({ onChange, setEstado } : FormularioProps) {
         } else {
             setError('');
         }
-
-        console.log(validImages)
 
         onChange(validImages);
     };
