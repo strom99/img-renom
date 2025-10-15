@@ -36,10 +36,7 @@ const ImgView: React.FC<ImgViewProps> = ({ data, toggleSelect }) => {
 export default function App() {
   const [selectedImages, setSelectedImages] = useState<ImagenConEstado[]>([]);
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
-  const [estado, setEstado] = useState(false);
   const renam: any = [];
-
-  console.log('ESTADO', estado);
 
   const toggleSelection = (img: ImagenConEstado) => {
     setValorFormulario((prev) =>
@@ -62,7 +59,7 @@ export default function App() {
 
 return (
   <>
-    <Formulario onChange={setValorFormulario} setEstado={setEstado} />
+    <Formulario onChange={setValorFormulario}  />
     <div className='boxImg'>
       {valorFormulario.length > 0 ? (
         valorFormulario.map((image: any, index) => (
@@ -71,6 +68,10 @@ return (
       ) : (
         <p>No hay imágenes seleccionadas.</p>
       )}
+    </div>
+    <div className='boxRename'>
+      {selectedImages.length > 0 && (<button className='btn btn-general' >Renombrar <img src="src/assets/flecha.png" alt="" /> </button>)}
+      
     </div>
   </>
 )
