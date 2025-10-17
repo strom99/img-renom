@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import Formulario from './FormularioTemps';
 import './App.css';
 import rata from './assets/rata.jpg';
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+
 
 interface ImgViewProps {
   data: any,
@@ -57,24 +60,36 @@ export default function App() {
 
 
 
-return (
-  <>
-    <Formulario onChange={setValorFormulario}  />
-    <div className='boxImg'>
-      {valorFormulario.length > 0 ? (
-        valorFormulario.map((image: any, index) => (
-          <ImgView key={index} data={image} toggleSelect={() => toggleSelection(image)} />
-        ))
-      ) : (
-        <p>No hay imágenes seleccionadas.</p>
-      )}
-    </div>
-    <div className='boxRename'>
-      {selectedImages.length > 0 && (<button className='btn btn-general' >Renombrar <img src="src/assets/flecha.png" alt="" /> </button>)}
-      
-    </div>
-  </>
-)
+  return (
+    <>
+      <Formulario onChange={setValorFormulario} />
+      <div className='boxImg'>
+        {valorFormulario.length > 0 ? (
+          valorFormulario.map((image: any, index) => (
+            <ImgView key={index} data={image} toggleSelect={() => toggleSelection(image)} />
+          ))
+        ) : (
+          <p>No hay imágenes seleccionadas.</p>
+        )}
+      </div>
+      <div className='boxRename'>
+        {selectedImages.length > 0 && (
+          <Popup closeOnDocumentClick={false} modal trigger={<button className='btn btn-general' >Renombrar <img src="src/assets/flecha.png" alt="" /> </button>}>
+            <form action="">
+              <label htmlFor="">Valor: </label>
+              <input defaultValue={"Img"} type="text" />
+              <span><b>-</b></span>
+              <input type="number" defaultValue={0} />4
+
+                    <button type='button' className="close" onClick={(e)=> close()}>&times;</button>
+
+            </form>
+          </Popup>
+        )}
+
+      </div>
+    </>
+  )
 
 }
 
