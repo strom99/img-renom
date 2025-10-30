@@ -41,6 +41,9 @@ export default function App() {
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
   const renam: any = [];
 
+    const [openPop,setOpenPop] = useState(true);
+    
+
   const toggleSelection = (img: ImagenConEstado) => {
     setValorFormulario((prev) =>
       prev.map((item) =>
@@ -59,7 +62,6 @@ export default function App() {
 
 
 
-
   return (
     <>
       <Formulario onChange={setValorFormulario} />
@@ -74,16 +76,18 @@ export default function App() {
       </div>
       <div className='boxRename'>
         {selectedImages.length > 0 && (
-          <Popup closeOnDocumentClick={false} modal trigger={<button className='btn btn-general' >Renombrar <img src="src/assets/flecha.png" alt="" /> </button>}>
-            <form action="">
+          <Popup closeOnDocumentClick={false} modal trigger={<button className='btn btn-general' onClick={() => setOpenPop(false)} >Renombrar <img src="src/assets/flecha.png" alt="" /> </button>}>
+            {openPop && (
+              <form action="">
               <label htmlFor="">Valor: </label>
               <input defaultValue={"Img"} type="text" />
               <span><b>-</b></span>
               <input type="number" defaultValue={0} />4
 
-                    <button type='button' className="close" onClick={(e)=> close()}>&times;</button>
+                    <button type='button' className="close" onClick={() => setOpenPop(true)}>Cancelar</button>
 
             </form>
+            )}
           </Popup>
         )}
 
