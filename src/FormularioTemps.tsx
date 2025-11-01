@@ -20,9 +20,9 @@ export default function Formulario( {onChange}  : FormularioProps) {
         // Iteramos por cada archivo para validarlo
         for (let file of files) {
             if (file.type === 'image/png' || file.type === 'image/jpeg') {
-                validImages.push({ img: file, valor: false});
+                validImages.push({ img: file, valor: false, posicion: 0});
             } else {
-                invalidImages.push({ img: file, valor: false});
+                invalidImages.push({ img: file, valor: false,posicion: 0});
             }
         }
 
