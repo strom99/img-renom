@@ -48,6 +48,7 @@ export default function App() {
 
   const [openPop, setOpenPop] = useState(false);
 
+
   function sendData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formdata = new FormData(e.currentTarget)
@@ -65,10 +66,9 @@ export default function App() {
       console.log('No puede estar vacio')
     }
 
-    if(!/^[a-zA-Z\s]+$/.test(e.target.value)){
+    if(!/^[a-zA-Z]+$/.test(e.target.value)){
       e.target.reportValidity();
-      e.target.setCustomValidity("Solo se permiten letras");
-      console.log('Solo se permiten letras')
+      e.target.setCustomValidity("Solo letras, sin espacios en blanco");
     }
 
   }
@@ -109,7 +109,7 @@ export default function App() {
             <div className='flex'>
               <label htmlFor="">Valor: </label>
               <div>
-                <input onInput={validatePre} pattern="^[a-zA-Z]+$" name='pre' defaultValue={pre} type="text" required />
+                <input onInput={validatePre} pattern="^[a-zA-Z]+$" name='pre' minLength={1} maxLength={6} defaultValue={pre} type="text" required />
                 <span><b>-</b></span>
                 <input type="number" defaultValue={0} min={0} /></div>
             </div>
