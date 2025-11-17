@@ -42,11 +42,36 @@ const ImgView: React.FC<ImgViewProps> = ({ pos, data, toggleSelect, isSelected }
 export default function App() {
   const [selectedImages, setSelectedImages] = useState<ImagenConEstado[]>([]);
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
+  const [pre, setPre] = useState('Img');
   const renam: any = [];
   const [contador, setContador] = useState(0)
 
   const [openPop, setOpenPop] = useState(false);
 
+  function sendData(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formdata = new FormData(e.currentTarget)
+    console.log(formdata);
+  }
+
+  function validatePre(e: any) {
+    setPre(e.target.value)
+    e.target.setCustomValidity("");
+    console.log(e.target.validity)
+
+    if (e.target.validity.valueMissing) {
+      e.target.reportValidity();
+      e.target.setCustomValidity("El nombre de la imagen es requerido");
+      console.log('No puede estar vacio')
+    }
+
+    if(!/^[a-zA-Z\s]+$/.test(e.target.value)){
+      e.target.reportValidity();
+      e.target.setCustomValidity("Solo se permiten letras");
+      console.log('Solo se permiten letras')
+    }
+
+  }
 
   const toggleSelection = (img: ImagenConEstado) => {
     if (selectedImages.includes(img)) {
@@ -55,6 +80,9 @@ export default function App() {
       setSelectedImages(prev => [...prev, img])
     }
   };
+
+
+
 
 
   return (
@@ -77,17 +105,17 @@ export default function App() {
       <div className='boxRename'>
         {selectedImages.length > 0 && <button className='btn btn-general' onClick={() => setOpenPop(true)}>Continuar <img src="src/assets/flecha.png" alt="" /> </button>}
         <Popup className='popup' closeOnDocumentClick={false} modal open={openPop}>
-          <form className='formRename' action="">
+          <form className='formRename' onSubmit={sendData} action="{}">
             <div className='flex'>
               <label htmlFor="">Valor: </label>
               <div>
-                <input defaultValue={"Img"} type="text" />
+                <input onInput={validatePre} pattern="^[a-zA-Z]+$" name='pre' defaultValue={pre} type="text" required />
                 <span><b>-</b></span>
-                <input type="number" defaultValue={0} min={0}/></div>
+                <input type="number" defaultValue={0} min={0} /></div>
             </div>
             <div className='btns'>
               <button type='button' className="close" onClick={() => setOpenPop(false)}>Cancelar</button>
-              <button className='ok'>Renombrar</button>
+              <button type='submit' className='ok'>Renombrar</button>
             </div>
           </form>
         </Popup>
