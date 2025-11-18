@@ -4,6 +4,7 @@ import './App.css';
 import rata from './assets/rata.jpg';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
+import { func } from 'prop-types';
 
 
 interface ImgViewProps {
@@ -43,6 +44,7 @@ export default function App() {
   const [selectedImages, setSelectedImages] = useState<ImagenConEstado[]>([]);
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
   const [pre, setPre] = useState('Img');
+  const [number, setNumber] = useState(0);
   const renam: any = [];
   const [contador, setContador] = useState(0)
 
@@ -52,7 +54,17 @@ export default function App() {
   function sendData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formdata = new FormData(e.currentTarget)
-    console.log(formdata);
+    formdata.append('Pre', pre);
+    formdata.append('Number', number.toString());
+    selectedImages.forEach((img :any) => formdata.append("imagenes[]", img));
+
+    for (let [key, value] of formdata.entries()) {
+    if (value instanceof File) {
+      console.log(`${key}: ${value.name} (${value.size} bytes)`);
+    } else {
+      console.log(`${key}: ${value}`);
+    }
+  }
   }
 
   function validatePre(e: any) {
@@ -66,11 +78,40 @@ export default function App() {
       console.log('No puede estar vacio')
     }
 
-    if(!/^[a-zA-Z]+$/.test(e.target.value)){
+    if (!/^[a-zA-Z]+$/.test(e.target.value)) {
       e.target.reportValidity();
       e.target.setCustomValidity("Solo letras, sin espacios en blanco");
     }
 
+    if (e.target.value.length > 6 || e.target.validity.tooLong) {
+      e.target.reportValidity();
+      e.target.setCustomValidity("Maximo 6 caracteres");
+    }
+
+  }
+
+  function validateNumber(e: any) {
+    const input = e.target;
+    setNumber(input.value)
+    input.setCustomValidity("");
+
+    // Validar manualmente
+    if (input.validity.badInput) {
+      input.setCustomValidity("Caracter invalido");
+    } else if (input.value === "" || isNaN(Number(input.value))) {
+      input.setCustomValidity("Debes ingresar un número");
+    } else if (input.validity.valueMissing) {
+      input.setCustomValidity("Campo obligatorio");
+    } else if (input.validity.rangeUnderflow) {
+      input.setCustomValidity(`El valor mínimo es ${input.min}`);
+    } else if (input.validity.rangeOverflow) {
+      input.setCustomValidity(`El valor máximo es ${input.max}`);
+    }
+
+    // Mostrar mensaje si hay error
+    input.reportValidity();
+
+    console.log(input.validity)
   }
 
   const toggleSelection = (img: ImagenConEstado) => {
@@ -111,7 +152,7 @@ export default function App() {
               <div>
                 <input onInput={validatePre} pattern="^[a-zA-Z]+$" name='pre' minLength={1} maxLength={6} defaultValue={pre} type="text" required />
                 <span><b>-</b></span>
-                <input type="number" defaultValue={0} min={0} /></div>
+                <input onInput={validateNumber} type="number" defaultValue={number} min={0} max={50} maxLength={3} /></div>
             </div>
             <div className='btns'>
               <button type='button' className="close" onClick={() => setOpenPop(false)}>Cancelar</button>
