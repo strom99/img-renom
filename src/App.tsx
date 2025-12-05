@@ -5,6 +5,7 @@ import rata from './assets/rata.jpg';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { func } from 'prop-types';
+import { uploadData } from './services/uploadservice';
 
 
 interface ImgViewProps {
@@ -53,18 +54,10 @@ export default function App() {
 
   function sendData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const formdata = new FormData(e.currentTarget)
-    formdata.append('Pre', pre);
-    formdata.append('Number', number.toString());
-    selectedImages.forEach((img :any) => formdata.append("imagenes[]", img));
-
-    for (let [key, value] of formdata.entries()) {
-    if (value instanceof File) {
-      console.log(`${key}: ${value.name} (${value.size} bytes)`);
-    } else {
-      console.log(`${key}: ${value}`);
-    }
-  }
+    console.log(selectedImages)
+    uploadData(pre, number, selectedImages)
+      .then(data => console.log(data))
+      .catch(err => console.error(err));
   }
 
   function validatePre(e: any) {
@@ -146,7 +139,7 @@ export default function App() {
       <div className='boxRename'>
         {selectedImages.length > 0 && <button className='btn btn-general' onClick={() => setOpenPop(true)}>Continuar <img src="src/assets/flecha.png" alt="" /> </button>}
         <Popup className='popup' closeOnDocumentClick={false} modal open={openPop}>
-          <form className='formRename' onSubmit={sendData} action="{}">
+          <form className='formRename' onSubmit={sendData}>
             <div className='flex'>
               <label htmlFor="">Valor: </label>
               <div>
