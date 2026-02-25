@@ -1,12 +1,11 @@
 // src/services/uploadService.ts
 
-export async function uploadData(pre: string, number: number, images: any[]) {
+export async function uploadData(pre: string, number: number, images: Blob[], extension:String) {
   const formData = new FormData();
   formData.append('Pre', pre);
   formData.append('Number', number.toString());
-  images.forEach(item => {
-    formData.append("imagenes[]", item.img); // el archivo real
-    // formData.append("posiciones[]", item.posicion.toString()); // la posición u otros datos
+  images.forEach((item,i) => {
+    formData.append("imagenes[]", item,`img${i}.${extension}`); // el archivo real
   });
 
   const res = await fetch("http://127.0.0.1:8000/api/upload", {

@@ -5,7 +5,10 @@ import rata from './assets/rata.jpg';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { func } from 'prop-types';
+import { useRef } from 'react';
+
 import { uploadData } from './services/uploadservice';
+import { resizeAndCompress } from './services/resizeAndCompress';
 
 
 interface ImgViewProps {
@@ -17,7 +20,7 @@ interface ImgViewProps {
 
 export type ImagenConEstado = {
   img: File;
-  posicion: number;
+  // posicion: number;
 };
 
 
@@ -46,24 +49,46 @@ export default function App() {
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
   const [pre, setPre] = useState('Img');
   const [number, setNumber] = useState(0);
-  const renam: any = [];
-  const [contador, setContador] = useState(0)
-
   const [openPop, setOpenPop] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
-
-  function sendData(e: React.FormEvent<HTMLFormElement>) {
+  async function sendData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(selectedImages)
-    uploadData(pre, number, selectedImages)
-      .then(data => console.log({'succes': 'La subida y descarga del ZIP fue exitosa'}))
-      .catch(err => console.error('Hubo un error:', err));
+    const extension = 'webp';
+    setLoading(true);
+
+    try {
+      // cambiar tamaño imagenes y transformacion WEBP
+      const processedFiles: Blob[] = [];
+      for (const file of selectedImages) {
+        if (file.img.type.startsWith('image/')) {
+          const compressed = await resizeAndCompress(file.img, undefined, undefined, extension as 'webp' | 'jpeg');
+          processedFiles.push(compressed);
+        }
+      }
+
+      await uploadData(pre, number, processedFiles, extension)
+        .then(data => console.log({ 'succes': 'La subida y descarga del ZIP fue exitosa' }))
+        .catch(err => console.error('Hubo un error:', err));
+    } catch (error) {
+      console.error('Hubo un error:', error);
+    } finally {
+      setLoading(false);
+      setSelectedImages([]);
+      setValorFormulario([]);
+      if (formRef.current) {
+        formRef.current.reset(); // 🔹 esto reinicia todos los inputs a defaultValue
+      }
+      setOpenPop(false)
+    }
+
   }
 
   function validatePre(e: any) {
     setPre(e.target.value)
     e.target.setCustomValidity("");
-    console.log(e.target.validity)
 
     if (e.target.validity.valueMissing) {
       e.target.reportValidity();
@@ -103,8 +128,6 @@ export default function App() {
 
     // Mostrar mensaje si hay error
     input.reportValidity();
-
-    console.log(input.validity)
   }
 
   const toggleSelection = (img: ImagenConEstado) => {
@@ -116,7 +139,11 @@ export default function App() {
   };
 
 
-
+  function checkFormReady() {
+    if (formRef.current) {
+      setIsReady(formRef.current.checkValidity())
+    }
+  }
 
 
   return (
@@ -139,19 +166,26 @@ export default function App() {
       <div className='boxRename'>
         {selectedImages.length > 0 && <button className='btn btn-general' onClick={() => setOpenPop(true)}>Continuar <img src="src/assets/flecha.png" alt="" /> </button>}
         <Popup className='popup' closeOnDocumentClick={false} modal open={openPop}>
-          <form className='formRename' onSubmit={sendData}>
+          <form ref={formRef} className='formRename' onSubmit={sendData}>
             <div className='flex'>
               <label htmlFor="">Valor: </label>
               <div>
-                <input onInput={validatePre} pattern="^[a-zA-Z]+$" name='pre' minLength={1} maxLength={6} defaultValue={pre} type="text" required />
+                <input onInput={(e) => { validatePre(e); checkFormReady(); }} pattern="^[a-zA-Z]+$" name='pre' minLength={1} maxLength={6} defaultValue={pre} type="text" required />
                 <span><b>-</b></span>
-                <input onInput={validateNumber} type="number" defaultValue={number} min={0} max={50} maxLength={3} /></div>
+                <input onInput={(e) => { validateNumber(e); checkFormReady(); }} type="number" defaultValue={number} min={0} max={50} maxLength={3} /></div>
             </div>
             <div className='btns'>
               <button type='button' className="close" onClick={() => setOpenPop(false)}>Cancelar</button>
-              <button type='submit' className='ok'>Renombrar</button>
+              <button type='submit' className='ok' disabled={loading || !isReady}>Renombrar</button>
             </div>
           </form>
+
+          {loading && (
+            <div className="loader">
+              Subiendo y preparando ZIP...
+            </div>
+          )}
+
         </Popup>
       </div>
     </>

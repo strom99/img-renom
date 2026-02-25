@@ -20,11 +20,13 @@ export default function Formulario( {onChange}  : FormularioProps) {
         // Iteramos por cada archivo para validarlo
         for (let file of files) {
             if (file.type === 'image/png' || file.type === 'image/jpeg') {
-                validImages.push({ img: file, posicion: 0});
+                validImages.push({ img: file});
             } else {
-                invalidImages.push({ img: file,posicion: 0});
+                invalidImages.push({ img: file});
             }
         }
+
+        console.log(validImages)
 
         if (invalidImages.length > 0) {
             setError(`Solo se permiten archivos de tipo PNG o JPEG. Archivos no válidos: ${invalidImages.join(', ')}`);

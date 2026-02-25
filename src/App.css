@@ -63,6 +63,8 @@
 
 .boxImg {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
   gap: 30px;
   margin: 20px 0px;
 }
