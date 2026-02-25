@@ -56,8 +56,8 @@ export default function App() {
     e.preventDefault();
     console.log(selectedImages)
     uploadData(pre, number, selectedImages)
-      .then(data => console.log(data))
-      .catch(err => console.error(err));
+      .then(data => console.log({'succes': 'La subida y descarga del ZIP fue exitosa'}))
+      .catch(err => console.error('Hubo un error:', err));
   }
 
   function validatePre(e: any) {
