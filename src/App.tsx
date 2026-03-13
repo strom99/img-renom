@@ -6,8 +6,8 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { func } from 'prop-types';
 import { useRef } from 'react';
+import {downloadZip} from './services/uploadservice'
 
-import { uploadData } from './services/uploadservice';
 import { resizeAndCompress } from './services/resizeAndCompress';
 
 
@@ -48,7 +48,7 @@ export default function App() {
   const [selectedImages, setSelectedImages] = useState<ImagenConEstado[]>([]);
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
   const [pre, setPre] = useState('Img');
-  const [number, setNumber] = useState(0);
+  const [number, setNumber] = useState(1);
   const [openPop, setOpenPop] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -69,9 +69,9 @@ export default function App() {
         }
       }
 
-      await uploadData(pre, number, processedFiles, extension)
-        .then(data => console.log({ 'succes': 'La subida y descarga del ZIP fue exitosa' }))
-        .catch(err => console.error('Hubo un error:', err));
+      downloadZip(pre,number,processedFiles,extension);
+
+
     } catch (error) {
       console.error('Hubo un error:', error);
     } finally {
@@ -110,7 +110,7 @@ export default function App() {
 
   function validateNumber(e: any) {
     const input = e.target;
-    setNumber(input.value)
+    setNumber(parseInt(input.value))
     input.setCustomValidity("");
 
     // Validar manualmente
@@ -145,6 +145,11 @@ export default function App() {
     }
   }
 
+  function abrirPop(){
+    setOpenPop(true)
+    setIsReady(true)
+  }
+
 
   return (
     <>
@@ -164,7 +169,7 @@ export default function App() {
         )}
       </div>
       <div className='boxRename'>
-        {selectedImages.length > 0 && <button className='btn btn-general' onClick={() => setOpenPop(true)}>Continuar <img src="src/assets/flecha.png" alt="" /> </button>}
+        {selectedImages.length > 0 && <button className='btn btn-general' onClick={() => abrirPop()}>Continuar <img src="src/assets/flecha.png" alt="" /> </button>}
         <Popup className='popup' closeOnDocumentClick={false} modal open={openPop}>
           <form ref={formRef} className='formRename' onSubmit={sendData}>
             <div className='flex'>
@@ -172,7 +177,7 @@ export default function App() {
               <div>
                 <input onInput={(e) => { validatePre(e); checkFormReady(); }} pattern="^[a-zA-Z]+$" name='pre' minLength={1} maxLength={6} defaultValue={pre} type="text" required />
                 <span><b>-</b></span>
-                <input onInput={(e) => { validateNumber(e); checkFormReady(); }} type="number" defaultValue={number} min={0} max={50} maxLength={3} /></div>
+                <input onInput={(e) => { validateNumber(e); checkFormReady(); }} type="number" defaultValue={number} min={0} max={50} maxLength={3} required /></div>
             </div>
             <div className='btns'>
               <button type='button' className="close" onClick={() => setOpenPop(false)}>Cancelar</button>
