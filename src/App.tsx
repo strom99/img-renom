@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Formulario from './FormularioTemps';
 import './App.css';
-import rata from './assets/rata.jpg';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { func } from 'prop-types';
 import { useRef } from 'react';
 import {downloadZip} from './services/uploadservice'
 
