@@ -9,13 +9,6 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
-  {
-    "scripts": {
-      "dev": "next dev",
-      "build": "next build",
-      "start": "next start"
-    }
-  },
   "dependencies": {
     "jszip": "^3.10.1",
     "prop-types": "^15.8.1",
