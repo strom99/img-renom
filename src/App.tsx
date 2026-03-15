@@ -4,7 +4,7 @@ import './App.css';
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { useRef } from 'react';
-import {downloadZip} from './services/uploadservice'
+import { downloadZip } from './services/uploadservice'
 
 import { resizeAndCompress } from './services/resizeAndCompress';
 
@@ -47,6 +47,8 @@ export default function App() {
   const [valorFormulario, setValorFormulario] = useState<ImagenConEstado[]>([]);
   const [pre, setPre] = useState('Img');
   const [number, setNumber] = useState(1);
+  const [compresion,setCompresion] = useState(0.7);
+  const [formato,setFormato] = useState("webp");
   const [openPop, setOpenPop] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -54,7 +56,6 @@ export default function App() {
 
   async function sendData(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const extension = 'webp';
     setLoading(true);
 
     try {
@@ -62,12 +63,12 @@ export default function App() {
       const processedFiles: Blob[] = [];
       for (const file of selectedImages) {
         if (file.img.type.startsWith('image/')) {
-          const compressed = await resizeAndCompress(file.img, undefined, undefined, extension as 'webp' | 'jpeg');
+          const compressed = await resizeAndCompress(file.img, undefined, compresion, formato as 'webp' | 'jpeg');
           processedFiles.push(compressed);
         }
       }
 
-      downloadZip(pre,number,processedFiles,extension);
+      downloadZip(pre, number, processedFiles, formato);
 
 
     } catch (error) {
@@ -143,14 +144,23 @@ export default function App() {
     }
   }
 
-  function abrirPop(){
+  function abrirPop() {
     setOpenPop(true)
     setIsReady(true)
   }
 
+  function handleFormato(e:any){
+    setFormato(e.target.value)
+  }
+
+   function handleCompresion(e:any){
+    setCompresion(e.target.value)
+  }
 
   return (
     <>
+      <h1 className='title'>Renombrado imagenes y seleccion calidad/formato</h1>
+
       <Formulario onChange={imagenes => {
         setValorFormulario(imagenes);
         setSelectedImages([]);
@@ -170,6 +180,28 @@ export default function App() {
         {selectedImages.length > 0 && <button className='btn btn-general' onClick={() => abrirPop()}>Continuar <img src="src/assets/flecha.png" alt="" /> </button>}
         <Popup className='popup' closeOnDocumentClick={false} modal open={openPop}>
           <form ref={formRef} className='formRename' onSubmit={sendData}>
+            <div className='flex'>
+              <label htmlFor="formato">Selecciona formato:</label>
+              <select onChange={handleFormato} value={formato} name="formato" id="formato">
+                <option value="jpg">JPG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WEBP</option>
+              </select>
+            </div>
+            <div className='flex'>
+              <label htmlFor="compresion">Compresion:</label>
+              <select onChange={handleCompresion} value={compresion} name="compresion" id="compresion">
+                <option value="1">100%</option>
+                <option value="0.9">90%</option>
+                <option value="0.8">80%</option>
+                <option value="0.7">70%</option>
+                <option value="0.6">60%</option>
+                <option value="0.5">50%</option>
+                <option value="0.4">40%</option>
+                <option value="0.3">30%</option>
+                <option value="0.2">20%</option>
+              </select>
+            </div>
             <div className='flex'>
               <label htmlFor="">Valor: </label>
               <div>

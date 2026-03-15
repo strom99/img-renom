@@ -26,10 +26,8 @@ export default function Formulario( {onChange}  : FormularioProps) {
             }
         }
 
-        console.log(validImages)
-
         if (invalidImages.length > 0) {
-            setError(`Solo se permiten archivos de tipo PNG o JPEG. Archivos no válidos: ${invalidImages.join(', ')}`);
+            setError(`Solo se permiten archivos de tipo IMG. Archivos no válidos: ${invalidImages.join(', ')}`);
         } else {
             setError('');
         }
