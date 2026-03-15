@@ -1,5 +1,3 @@
-import { number } from "prop-types";
-
 
 export async function resizeAndCompress(file: File, maxWidth = 2000, quality: number, outputFormat: 'webp' | 'jpeg' | 'png' = 'webp'): Promise<Blob> {
     return new Promise((resolve, reject) => {
